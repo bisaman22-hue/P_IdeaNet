@@ -1,4 +1,4 @@
 Flask==3.0.3
 Werkzueg==3.0.3
-reportlab
 gunicorn
+reportlab
