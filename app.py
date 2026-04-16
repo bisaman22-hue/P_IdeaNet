@@ -323,4 +323,4 @@ def author_profile(owner_id):
     return render_template("author.html", user=user, projects=projects, total_views=total_views, total_downloads=total_downloads)
 
 if __name__=="__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)
