@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>P_IdeaNet</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body{background:#fdfdfd; font-family:Inter, system-ui, Arial, sans-serif;}
+    .nav-brand{font-weight:600; color:#0b3d91;}
+    .project-row{padding:12px 0; border-bottom:1px solid #eee;}
+    .project-title{color:#0b3d91; font-size:1.05rem; font-weight:600; text-decoration:none;}
+    .small-badge{font-size:0.75rem; margin-left:6px;}
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container">
+    <a class="navbar-brand nav-brand" href="{{ url_for('projects') }}">🌐 P_IdeaNet</a>
+    <div class="d-flex align-items-center gap-2">
+      {% if session.user_id %}
+        <small class="text-muted me-2">Hi, {{ session.user_name }}</small>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('create') }}">+ Add</a>
+        <a class="btn btn-sm btn-outline-danger" href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('login') }}">Login</a>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('register') }}">Register</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

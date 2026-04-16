@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>👤 {{ user['name'] or user['email'] }}'s Projects</h3>
+<p>Total Views: {{ total_views }} | Total Downloads: {{ total_downloads }}</p>
+<hr>
+
+{% for project in projects %}
+<div class="project-row">
+  <a class="project-title" href="{{ url_for('view_project', project_id=project['id']) }}">{{ project['title'] }}</a><br>
+  <small>{{ project['description'][:150] }}{% if project['description']|length > 150 %}...{% endif %}</small>
+  <div class="mt-1">
+    {% if project['pdf_filename'] %}
+      <a href="{{ url_for('uploaded_file', filename=project['pdf_filename']) }}" class="btn btn-sm btn-outline-primary">📄 PDF</a>
+    {% endif %}
+    <span class="badge bg-info small-badge">Views: {{ project['views'] }}</span>
+    <span class="badge bg-warning text-dark small-badge">Downloads: {{ project['downloads'] }}</span>
+  </div>
+</div>
+{% endfor %}
+
+<a href="{{ url_for('projects') }}" class="btn btn-secondary mt-3">⬅ Back to All Projects</a>
+{% endblock %}

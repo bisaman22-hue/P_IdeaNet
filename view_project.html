@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>{{ project['title'] }}</h3>
+<p><strong>Author:</strong> 
+  <a href="{{ url_for('author_profile', owner_id=project['owner_id']) }}">{{ project['author'] }}</a>
+</p>
+<p><strong>Category:</strong> {{ project['category'] or '—' }}</p>
+<p>{{ project['description'] }}</p>
+<p><strong>Views:</strong> {{ project['views'] }} | <strong>Downloads:</strong> {{ project['downloads'] }}</p>
+
+{% if project['pdf_filename'] %}
+  <a href="{{ url_for('uploaded_file', filename=project['pdf_filename']) }}" 
+     class="btn btn-outline-primary" target="_blank">📄 View / Download PDF</a>
+{% endif %}
+<a href="{{ url_for('projects') }}" class="btn btn-secondary">⬅ Back to Projects</a>
+{% endblock %}

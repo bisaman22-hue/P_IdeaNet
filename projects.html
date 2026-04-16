@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">P_IdeaNet Projects</h4>
+  <form class="d-flex gap-2" method="get" action="{{ url_for('projects') }}">
+    <input name="query" value="{{ query }}" class="form-control form-control-sm" placeholder="Search title, author, description">
+    <select name="category" class="form-select form-select-sm">
+      <option value="">All categories</option>
+      {% for c in categories %}
+        <option value="{{ c }}" {% if selected_category==c %}selected{% endif %}>{{ c }}</option>
+      {% endfor %}
+    </select>
+    <select name="sort" class="form-select form-select-sm">
+      <option value="newest" {% if sort=='newest' %}selected{% endif %}>Newest</option>
+      <option value="views" {% if sort=='views' %}selected{% endif %}>Most viewed</option>
+      <option value="downloads" {% if sort=='downloads' %}selected{% endif %}>Most downloaded</option>
+    </select>
+    <button class="btn btn-primary btn-sm" type="submit">Go</button>
+  </form>
+</div>
+
+{% if featured %}
+<div class="mb-3">
+  <h6 class="mb-2">🔥 Featured</h6>
+  {% for f in featured %}
+    <div class="project-row d-flex justify-content-between align-items-center">
+      <div>
+        <a class="project-title" href="{{ url_for('view_project', project_id=f['id']) }}">{{ f['title'] }}</a>
+        <div class="text-muted small">By <a href="{{ url_for('author_profile', owner_id=f['owner_id']) }}">{{ f['author'] }}</a></div>
+      </div>
+      <div class="text-end">
+        <small class="text-muted">Views: {{ f['views'] }}</small>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if projects %}
+  <div class="list-group">
+    {% for p in projects %}
+      <div class="list-group-item project-row">
+        <div class="d-flex justify-content-between">
+          <div>
+            <a class="project-title" href="{{ url_for('view_project', project_id=p['id']) }}">{{ p['title'] }}</a>
+            <div class="text-muted small">
+              By <a href="{{ url_for('author_profile', owner_id=p['owner_id']) }}">{{ p['author'] }}</a>
+              {% if p['category'] %} • {{ p['category'] }}{% endif %}
+            </div>
+            <div class="mt-2">{{ p['description'][:240] }}{% if p['description']|length > 240 %}...{% endif %}</div>
+            <div class="mt-2">
+              {% if p['pdf_filename'] %}
+                <a href="{{ url_for('uploaded_file', filename=p['pdf_filename']) }}" class="me-3 small text-decoration-none">PDF</a>
+              {% endif %}
+              {% if session.user_id and session.user_id == p['owner_id'] %}
+                <a href="{{ url_for('edit', project_id=p['id']) }}" class="me-3 small text-decoration-none">Edit</a>
+                <a href="{{ url_for('delete', project_id=p['id']) }}" class="me-3 small text-danger text-decoration-none" onclick="return confirm('Delete this project?')">Delete</a>
+              {% endif %}
+            </div>
+          </div>
+          <div class="text-end small">
+            <div>Views: <span class="badge bg-info small-badge">{{ p['views'] }}</span></div>
+            <div class="mt-1">Downloads: <span class="badge bg-warning text-dark small-badge">{{ p['downloads'] }}</span></div>
+            <div class="mt-2"><span class="badge {% if p['is_public'] %}bg-success{% else %}bg-secondary{% endif %} small-badge">{{ 'Public' if p['is_public'] else 'Private' }}</span></div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% for pnum in range(1, total_pages+1) %}
+        <li class="page-item {% if pnum==page %}active{% endif %}">
+          <a class="page-link" href="{{ url_for('projects') }}?query={{ query }}&category={{ selected_category }}&sort={{ sort }}&page={{ pnum }}">{{ pnum }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% else %}
+  <div class="alert alert-info">No projects found.</div>
+{% endif %}
+{% endblock %}
